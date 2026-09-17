@@ -27,6 +27,7 @@ import { HistoryNotesView } from './components/HistoryNotesView';
 import { PeriodicTableModal } from './components/PeriodicTableModal';
 import { SynthesisGuideModal } from './components/SynthesisGuideModal';
 import { AiChatbox } from './components/AiChatbox';
+import { ChemistryBackground } from './components/ChemistryBackground';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
@@ -206,7 +207,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#07111f] text-[#eef6ff] flex">
+    <div className="min-h-screen bg-[#040914] text-[#eef6ff] flex relative selection:bg-[#38bdf8]/30 selection:text-white">
+      {/* Chemistry Ambient Animated Canvas & Graphene Mesh */}
+      <ChemistryBackground />
+
       {/* Sidebar navigation */}
       <Sidebar
         activeTab={activeTab}
@@ -220,7 +224,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full flex flex-col justify-between">
+      <div className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full flex flex-col justify-between relative z-10">
         <div>
           {/* Header */}
           <Header
@@ -237,14 +241,32 @@ export default function App() {
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
               {/* Hero Search Section */}
-              <section className="relative rounded-2xl bg-gradient-to-br from-[#10253b] via-[#0b1728] to-[#071321] border border-[#1e334c] p-5 sm:p-7 overflow-hidden shadow-2xl">
+              <section className="relative rounded-2xl bg-gradient-to-br from-[#0e2136]/90 via-[#0a1626]/90 to-[#06101c]/95 backdrop-blur-md border border-[#1b3654] p-5 sm:p-7 overflow-hidden shadow-2xl">
                 {/* Background glow circle */}
-                <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-[#315c9a]/20 blur-3xl pointer-events-none" />
+                <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-[#1e4976]/25 blur-3xl pointer-events-none" />
+
+                {/* Chemical Molecule Watermark Vector on Hero card */}
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none hidden md:block opacity-15">
+                  <svg width="220" height="220" viewBox="0 0 200 200" fill="none" className="stroke-[#38bdf8]">
+                    {/* Interconnected molecular cluster */}
+                    <circle cx="100" cy="100" r="14" strokeWidth="2" fill="#0c233c" />
+                    <circle cx="45" cy="65" r="10" strokeWidth="1.5" fill="#08182b" />
+                    <circle cx="155" cy="65" r="10" strokeWidth="1.5" fill="#08182b" />
+                    <circle cx="65" cy="155" r="11" strokeWidth="1.5" fill="#08182b" />
+                    <circle cx="145" cy="150" r="9" strokeWidth="1.5" fill="#08182b" />
+                    <line x1="88" y1="92" x2="53" y2="71" strokeWidth="2" />
+                    <line x1="112" y1="92" x2="147" y2="71" strokeWidth="2" />
+                    <line x1="92" y1="112" x2="72" y2="146" strokeWidth="2" />
+                    <line x1="110" y1="110" x2="139" y2="143" strokeWidth="2" />
+                    {/* Double bond */}
+                    <line x1="113" y1="115" x2="142" y2="148" strokeWidth="1" strokeDasharray="3 3" />
+                  </svg>
+                </div>
 
                 <div className="relative z-10 max-w-3xl">
                   <div className="text-[11px] font-bold text-[#56b6ff] uppercase tracking-widest flex items-center gap-2">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Explore Any Chemical Material
+                    <Sparkles className="w-3.5 h-3.5 text-[#38bdf8]" />
+                    <span>Computational Materials Chemistry & Screening</span>
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-black text-white mt-1 mb-2 tracking-tight">
                     Discover materials before you build them.
