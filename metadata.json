@@ -1,0 +1,6 @@
+{
+  "name": "MaterialMind — AI Material Discovery",
+  "description": "AI-driven materials screening and discovery platform predicting crystal properties, stability, band gaps, synthesis feasibility, and candidate comparisons.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
