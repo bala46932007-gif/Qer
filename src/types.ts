@@ -52,6 +52,8 @@ export interface MaterialData {
   screeningScore: number; // 0-100
   confidence: number; // 0-100
   formationEnergy: number; // eV/atom (usually negative for stable compounds)
+  volume: number; // Unit cell volume in Å³
+  energyAboveHull: number; // Energy above convex hull in eV/atom (0.000 = ground state on hull, <0.05 = synthesizable)
   crystalSystem: CrystalSystem;
   spaceGroup: string;
   latticeConstants: LatticeParameters;
@@ -85,6 +87,9 @@ export interface ScreeningFilter {
   minScore: number;
   crystalSystem: string;
   requiredElement: string;
+  maxEnergyAboveHull?: number; // in eV/atom (e.g. 0.00 = only on hull, 0.05 = metastable)
+  maxFormationEnergy?: number; // in eV/atom (e.g. <= -1.0 eV/atom)
+  maxVolume?: number; // in Å³
 }
 
 export type ActiveTab = 'dashboard' | 'discover' | 'compare' | 'history';

@@ -8,6 +8,8 @@ interface HeaderProps {
   currentMaterial: MaterialData;
   onExportReport: () => void;
   aiStatus: { online: boolean; aiEnabled: boolean };
+  onOpenChat?: () => void;
+  isChatOpen?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -16,6 +18,8 @@ export const Header: React.FC<HeaderProps> = ({
   currentMaterial,
   onExportReport,
   aiStatus,
+  onOpenChat,
+  isChatOpen,
 }) => {
   return (
     <header className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-[#172d45]">
@@ -50,6 +54,26 @@ export const Header: React.FC<HeaderProps> = ({
             {aiStatus.aiEnabled ? 'Gemini 3.8 Flash Online' : 'AI Engine Ready'}
           </span>
         </div>
+
+        {/* AI Chatbox Trigger Button */}
+        {onOpenChat && (
+          <button
+            id="header-open-chat-btn"
+            onClick={onOpenChat}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+              isChatOpen
+                ? 'bg-[#143e69] border-[#3f88c5] text-white shadow-md shadow-[#3f88c5]/20'
+                : 'bg-[#0e243c] hover:bg-[#133252] border-[#1f4a75] text-[#7ebaf0] hover:text-white'
+            }`}
+            title="Open AI Materials Assistant Chat"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#56b6ff]" />
+            <span>AI Assistant</span>
+            <span className="hidden md:inline font-mono text-[10px] bg-[#08182b] px-1.5 py-0.2 rounded border border-[#183a5e] text-[#56b6ff]">
+              {currentMaterial.formula}
+            </span>
+          </button>
+        )}
 
         {/* Export Analysis Button */}
         <button

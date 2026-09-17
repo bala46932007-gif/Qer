@@ -62,6 +62,17 @@ export const ELEMENT_METADATA: Record<string, { name: string; weight: number; co
   Bi: { name: 'Bismuth', weight: 208.98, color: '#9E4FB5', radius: 1.48 }
 };
 
+export function calculateUnitCellVolume(lattice: { a: number; b: number; c: number; alpha: number; beta: number; gamma: number }): number {
+  const { a, b, c, alpha, beta, gamma } = lattice;
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const rA = toRad(alpha || 90);
+  const rB = toRad(beta || 90);
+  const rG = toRad(gamma || 90);
+  const factor = 1 - Math.cos(rA) ** 2 - Math.cos(rB) ** 2 - Math.cos(rG) ** 2 + 2 * Math.cos(rA) * Math.cos(rB) * Math.cos(rG);
+  const volume = a * b * c * Math.sqrt(Math.max(0.0001, factor));
+  return parseFloat(volume.toFixed(2));
+}
+
 export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
   LiFePO4: {
     formula: 'LiFePO4',
@@ -79,6 +90,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 92,
     confidence: 87,
     formationEnergy: -2.31,
+    volume: 291.24,
+    energyAboveHull: 0.000,
     crystalSystem: 'Orthorhombic',
     spaceGroup: 'Pnma (No. 62)',
     latticeConstants: { a: 10.33, b: 6.01, c: 4.69, alpha: 90, beta: 90, gamma: 90 },
@@ -116,6 +129,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 90,
     confidence: 91,
     formationEnergy: -3.22,
+    volume: 62.36,
+    energyAboveHull: 0.000,
     crystalSystem: 'Tetragonal',
     spaceGroup: 'P4_2/mnm (Rutile)',
     latticeConstants: { a: 4.59, b: 4.59, c: 2.96, alpha: 90, beta: 90, gamma: 90 },
@@ -150,6 +165,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 95,
     confidence: 93,
     formationEnergy: -0.74,
+    volume: 82.78,
+    energyAboveHull: 0.000,
     crystalSystem: 'Hexagonal',
     spaceGroup: 'P6_3mc (No. 186)',
     latticeConstants: { a: 3.08, b: 3.08, c: 10.08, alpha: 90, beta: 90, gamma: 120 },
@@ -184,6 +201,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 91,
     confidence: 89,
     formationEnergy: -1.14,
+    volume: 45.71,
+    energyAboveHull: 0.000,
     crystalSystem: 'Hexagonal',
     spaceGroup: 'P6_3mc',
     latticeConstants: { a: 3.19, b: 3.19, c: 5.19, alpha: 90, beta: 90, gamma: 120 },
@@ -218,6 +237,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 86,
     confidence: 85,
     formationEnergy: -1.45,
+    volume: 945.78,
+    energyAboveHull: 0.024,
     crystalSystem: 'Orthorhombic',
     spaceGroup: 'Pnma (Black phase)',
     latticeConstants: { a: 8.85, b: 8.57, c: 12.47, alpha: 90, beta: 90, gamma: 90 },
@@ -252,6 +273,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 93,
     confidence: 90,
     formationEnergy: -1.78,
+    volume: 106.31,
+    energyAboveHull: 0.000,
     crystalSystem: 'Hexagonal',
     spaceGroup: 'P6_3/mmc',
     latticeConstants: { a: 3.16, b: 3.16, c: 12.29, alpha: 90, beta: 90, gamma: 120 },
@@ -285,6 +308,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 94,
     confidence: 92,
     formationEnergy: -3.55,
+    volume: 64.16,
+    energyAboveHull: 0.000,
     crystalSystem: 'Tetragonal',
     spaceGroup: 'P4mm',
     latticeConstants: { a: 3.99, b: 3.99, c: 4.03, alpha: 90, beta: 90, gamma: 90 },
@@ -319,6 +344,8 @@ export const INITIAL_PRESET_MATERIALS: Record<string, MaterialData> = {
     screeningScore: 89,
     confidence: 88,
     formationEnergy: -0.82,
+    volume: 506.41,
+    energyAboveHull: 0.000,
     crystalSystem: 'Trigonal',
     spaceGroup: 'R-3m (No. 166)',
     latticeConstants: { a: 4.38, b: 4.38, c: 30.49, alpha: 90, beta: 90, gamma: 120 },
@@ -409,6 +436,9 @@ export function generateAlgorithmicMaterialData(formula: string): MaterialData {
     density = 6.0;
   }
 
+  const latticeConstants = { a: 5.4, b: 5.4, c: 7.2, alpha: 90, beta: 90, gamma: 90 };
+  const volume = calculateUnitCellVolume(latticeConstants);
+
   return {
     formula,
     name: `${formula} Composition`,
@@ -425,9 +455,11 @@ export function generateAlgorithmicMaterialData(formula: string): MaterialData {
     screeningScore: 85,
     confidence: 81,
     formationEnergy: -1.65,
+    volume,
+    energyAboveHull: 0.000,
     crystalSystem: hasO ? 'Orthorhombic' : 'Hexagonal',
     spaceGroup: 'P-1 (Estimated)',
-    latticeConstants: { a: 5.4, b: 5.4, c: 7.2, alpha: 90, beta: 90, gamma: 90 },
+    latticeConstants,
     elements: elementRatios,
     aiInsight: `Compositional screening model analysis indicates viable thermodynamic stability for ${formula}. Synthesizability is high using standard solid-state or vapor reaction routes. Experimental verification is recommended to determine exact stoichiometry and defect formation energies.`,
     synthesisMethod: 'Solid-State Ceramic Calcination or Solution Sol-Gel',

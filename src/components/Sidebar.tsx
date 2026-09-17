@@ -9,6 +9,8 @@ interface SidebarProps {
   onCloseMobile: () => void;
   savedCount: number;
   historyCount: number;
+  onOpenChat?: () => void;
+  isChatOpen?: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -18,6 +20,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
   savedCount,
   historyCount,
+  onOpenChat,
+  isChatOpen,
 }) => {
   const navItems: { id: ActiveTab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -97,6 +101,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
               );
             })}
           </nav>
+
+          {/* AI Chatbox Trigger Card in Sidebar */}
+          {onOpenChat && (
+            <div className="mt-6 p-3.5 rounded-xl bg-gradient-to-br from-[#0c2036] to-[#0f2a48] border border-[#1d436c] shadow-lg">
+              <div className="flex items-center gap-2 text-white text-xs font-bold mb-1">
+                <Sparkles className="w-4 h-4 text-[#56b6ff]" />
+                <span>AI Lab Assistant</span>
+              </div>
+              <p className="text-[11px] text-[#7ea0bf] leading-relaxed mb-3">
+                Ask about lab synthesis steps, dopants, band structure, or safety protocols.
+              </p>
+              <button
+                id="sidebar-open-chat-btn"
+                onClick={() => {
+                  onOpenChat();
+                  onCloseMobile();
+                }}
+                className={`w-full py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                  isChatOpen
+                    ? 'bg-[#184878] text-white border border-[#3e85c2]'
+                    : 'bg-[#103254] hover:bg-[#164372] text-[#69bcff] hover:text-white border border-[#214f7d]'
+                }`}
+              >
+                <span>{isChatOpen ? 'Chat Active' : 'Open AI Chat'}</span>
+                <Sparkles className="w-3 h-3 text-[#56b6ff]" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Sidebar Bottom Disclaimer */}

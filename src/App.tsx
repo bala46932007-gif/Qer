@@ -26,6 +26,7 @@ import { CompareView } from './components/CompareView';
 import { HistoryNotesView } from './components/HistoryNotesView';
 import { PeriodicTableModal } from './components/PeriodicTableModal';
 import { SynthesisGuideModal } from './components/SynthesisGuideModal';
+import { AiChatbox } from './components/AiChatbox';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
@@ -33,6 +34,7 @@ export default function App() {
   const [currentMaterial, setCurrentMaterial] = useState<MaterialData>(INITIAL_PRESET_MATERIALS['LiFePO4']);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [isAiChatOpen, setIsAiChatOpen] = useState(false);
 
   // Stored state
   const [allMaterials, setAllMaterials] = useState<Record<string, MaterialData>>(INITIAL_PRESET_MATERIALS);
@@ -170,11 +172,13 @@ export default function App() {
 
   const handleAddToCompare = (formula: string) => {
     if (!compareList.includes(formula)) {
+      if (compareList.length >= 10) return;
       setCompareList(prev => [...prev, formula]);
     }
   };
 
   const handleRemoveFromCompare = (formula: string) => {
+    if (compareList.length <= 3) return;
     setCompareList(prev => prev.filter(f => f !== formula));
   };
 
@@ -211,6 +215,8 @@ export default function App() {
         onCloseMobile={() => setIsMobileMenuOpen(false)}
         savedCount={labNotes.length}
         historyCount={historyList.length}
+        onOpenChat={() => setIsAiChatOpen(prev => !prev)}
+        isChatOpen={isAiChatOpen}
       />
 
       {/* Main Content Area */}
@@ -223,6 +229,8 @@ export default function App() {
             currentMaterial={currentMaterial}
             onExportReport={handleExportDossier}
             aiStatus={aiStatus}
+            onOpenChat={() => setIsAiChatOpen(prev => !prev)}
+            isChatOpen={isAiChatOpen}
           />
 
           {/* TAB 1: DASHBOARD */}
@@ -344,11 +352,21 @@ export default function App() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                         <div className="text-xs text-[#43d6a3] font-bold bg-[#0d271f] px-3 py-1 rounded-full border border-[#184e3a] flex items-center gap-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           Confidence: {currentMaterial.confidence}%
                         </div>
+
+                        <button
+                          id="ask-ai-material-btn"
+                          onClick={() => setIsAiChatOpen(true)}
+                          className="text-xs font-bold text-[#8ec8ff] hover:text-white bg-[#102e4d] hover:bg-[#173e66] px-3 py-1.5 rounded-xl border border-[#23507c] flex items-center gap-1.5 transition-colors"
+                          title="Open AI Chat Assistant grounded in this material"
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-[#56b6ff]" />
+                          Ask AI Assistant
+                        </button>
 
                         <button
                           onClick={() => setIsSynthesisModalOpen(true)}
@@ -396,8 +414,17 @@ export default function App() {
                     </div>
 
                     {/* AI Insight Box */}
-                    <div className="p-3.5 border-l-4 border-[#56b6ff] bg-[#0b1b2c] rounded-r-xl text-xs text-[#a9bfd3] leading-relaxed">
-                      <b className="text-white">AI Solid-State Insight:</b> {currentMaterial.aiInsight}
+                    <div className="p-3.5 border-l-4 border-[#56b6ff] bg-[#0b1b2c] rounded-r-xl text-xs text-[#a9bfd3] leading-relaxed flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div>
+                        <b className="text-white">AI Solid-State Insight:</b> {currentMaterial.aiInsight}
+                      </div>
+                      <button
+                        onClick={() => setIsAiChatOpen(true)}
+                        className="shrink-0 inline-flex items-center gap-1.5 text-[#56b6ff] hover:text-white font-bold text-xs bg-[#0f243b] hover:bg-[#163758] px-2.5 py-1 rounded-lg border border-[#1f456c] transition-colors"
+                      >
+                        <Sparkles className="w-3 h-3 text-[#56b6ff]" />
+                        <span>Discuss in Chat</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -766,6 +793,7 @@ export default function App() {
               compareList={compareList}
               onRemoveFromCompare={handleRemoveFromCompare}
               onAddToCompare={handleAddToCompare}
+              onSetCompareList={setCompareList}
               onSelectForDossier={f => {
                 handleAnalyze(f);
                 setActiveTab('dashboard');
@@ -810,6 +838,19 @@ export default function App() {
         isOpen={isSynthesisModalOpen}
         onClose={() => setIsSynthesisModalOpen(false)}
         material={currentMaterial}
+      />
+
+      {/* AI Materials Assistant Chatbox */}
+      <AiChatbox
+        currentMaterial={currentMaterial}
+        onSelectMaterial={f => {
+          setFormulaInput(f);
+          handleAnalyze(f);
+          setActiveTab('dashboard');
+        }}
+        isOpen={isAiChatOpen}
+        onClose={() => setIsAiChatOpen(false)}
+        onToggle={() => setIsAiChatOpen(prev => !prev)}
       />
     </div>
   );
